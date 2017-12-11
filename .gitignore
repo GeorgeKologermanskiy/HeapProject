@@ -1,0 +1,15 @@
+Debug/*
+Release/*
+
+Heap/Debug/*
+Heap/Release/*
+
+unitest/Debug/*
+unitest/Release/*
+
+googletests/Debug/*
+googletests/Release/*
+
+unitest/*.txt
+.vs/*
+*VC*
