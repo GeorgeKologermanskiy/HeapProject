@@ -9,7 +9,10 @@ class skew_heap :public IHeap {
 		T * l, *r;
 		T() :value(0), l(0), r(0) {}
 		T(int value) :value(value), l(0), r(0) {}
-		~T() {}
+		~T() {
+			if (l)delete l;
+			if (r)delete r;
+		}
 	};
 
 	T * root;
@@ -29,9 +32,14 @@ public:
 
 	skew_heap(int value) :root(new T(value)) {}
 
-	void Meld(IHeap & T2) {
-		skew_heap * T2_ = dynamic_cast<skew_heap*>(&T2);
+	~skew_heap() {
+		if(root)delete root;
+	}
+
+	void Meld(IHeap * T2) {
+		skew_heap * T2_ = dynamic_cast<skew_heap*>(T2);
 		root = Merge(root, T2_->root);
+		T2_->root = NULL;
 	}
 
 	void Insert(int value) {

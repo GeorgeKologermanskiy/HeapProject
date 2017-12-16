@@ -10,7 +10,10 @@ class leftist_heap :public IHeap {
 		int d;
 		T() :value(0), l(0), r(0), d(1) {}
 		T(int value) :value(value), l(0), r(0), d(1) {}
-		~T() {}
+		~T() {
+			if (l)delete l;
+			if (r)delete r;
+		}
 	};
 
 	int d(T * t) {
@@ -36,9 +39,14 @@ public:
 
 	leftist_heap(int value) :root(new T(value)) {}
 
-	void Meld(IHeap & T2) {
-		leftist_heap * T2_ = dynamic_cast<leftist_heap*>(&T2);
+	~leftist_heap() {
+		if(root)delete root;
+	}
+
+	void Meld(IHeap * T2) {
+		leftist_heap * T2_ = dynamic_cast<leftist_heap*>(T2);
 		root = Merge(root, T2_->root);
+		T2_->root = NULL;
 	}
 
 	void Insert(int value) {

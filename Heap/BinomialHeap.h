@@ -13,7 +13,10 @@ private:
 		int value_;
 		Node() :value_(INT_MAX), k_(0) {}
 		Node(int value) :value_(value), k_(0) {}
-
+		~Node() {
+			for (size_t i = 0; i < childs_.size(); ++i)
+				delete childs_[i];
+		}
 		void Meld(Node * t) {
 			assert(k_ == t->k_);
 			if (t->value_ < value_) { std::swap(value_, t->value_); std::swap(childs_, t->childs_); }
@@ -60,6 +63,11 @@ private:
 public:
 	binomial_heap() {}
 
+	~binomial_heap() {
+		for (size_t i = 0; i < all_trees_.size(); ++i)
+			delete all_trees_[i];
+	}
+
 	binomial_heap(int value) :MinimumIndex_(0) {
 		all_trees_.push_back(new Node(value));
 	}
@@ -73,10 +81,8 @@ public:
 		return *this;
 	}
 
-	void Meld(IHeap & T2) {
-		binomial_heap * T2_;
-		try { T2_ = dynamic_cast<binomial_heap*>(&T2); }
-		catch (std::bad_cast) { return; }
+	void Meld(IHeap * T2) {
+		binomial_heap * T2_ = dynamic_cast<binomial_heap*>(T2);
 		std::vector<Node*> buffer_;
 		std::merge(all_trees_.begin(), all_trees_.end(), T2_->all_trees_.begin(),
 			T2_->all_trees_.end(), back_inserter(buffer_), Comparator());
@@ -90,11 +96,12 @@ public:
 				buffer_[i + 1]->Meld(buffer_[i]);
 			}
 		}
+		T2_->all_trees_.clear();
 		UpdateMinimum_();
 	}
 
 	void Insert(int value) {
-		Meld(binomial_heap(value));
+		Meld(new binomial_heap(value));
 	}
 
 	int GetMin()const {
@@ -106,7 +113,7 @@ public:
 		int ReturnValue_ = GetMin();
 		Node * PosMin = all_trees_[MinimumIndex_];
 		all_trees_.erase(all_trees_.begin() + MinimumIndex_);
-		Meld(binomial_heap(PosMin));
+		Meld(new binomial_heap(PosMin));
 		delete PosMin;
 		return ReturnValue_;
 	}
